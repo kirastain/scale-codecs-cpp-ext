@@ -43,12 +43,13 @@ std::deque<uint8_t> CompactIntegerEncoder::encodeOneByte(const int64_t& value)
     uint8_t vShift = v << 2;
     // std::cout << "check v: " << std::bitset<8>(vShift) << std::endl;
 
-    boost::endian::endian_buffer<boost::endian::order::little, uint8_t, 8> buf{};
-    buf = vShift;
+    // boost::endian::endian_buffer<boost::endian::order::little, uint8_t, 8> buf{};
+    // std::endian::
+    // buf = vShift;
 
     std::deque<uint8_t> check;
 
-    check.push_back(buf.data()[0]);
+    check.push_back(vShift);
     // printEncodedStream<uint8_t>(check, value);
 
     // mData.insert(mData.end(), check.begin(), check.end());
@@ -58,19 +59,22 @@ std::deque<uint8_t> CompactIntegerEncoder::encodeOneByte(const int64_t& value)
 std::deque<uint8_t> CompactIntegerEncoder::encodeTwoByte(const int64_t& value)
 {
     uint16_t v = static_cast<uint16_t>(value);
-    // std::cout << "check v: " << std::bitset<16>(v) << std::endl;
+    std::cout << "check v: " << std::bitset<16>(v) << std::endl;
     uint16_t vShift = v << 2;
     // std::cout << "check v: " << std::bitset<16>(vShift) << std::endl;
     uint16_t vShiftAdd = vShift | 1;
     // std::cout << "check v: " << std::bitset<16>(vShiftAdd) << std::endl;
 
-    boost::endian::endian_buffer<boost::endian::order::little, uint16_t, 16> buf{};
-    buf = vShiftAdd;
+    // boost::endian::endian_buffer<boost::endian::order::little, uint16_t, 16> buf{};
+    // buf = vShiftAdd;
 
     std::deque<uint8_t> check;
 
-    check.push_back(buf.data()[0]);
-    check.push_back(buf.data()[1]);
+    uint8_t buf0 = vShiftAdd & 0xFF;
+    uint8_t buf1 = (vShiftAdd >> 8) & 0xFF;
+
+    check.push_back(buf0);
+    check.push_back(buf1);
 
     // printEncodedStream<uint16_t>(check, value);
     // mData.insert(mData.end(), check.begin(), check.end());
@@ -86,15 +90,21 @@ std::deque<uint8_t> CompactIntegerEncoder::encodeFourByte(const int64_t& value)
     uint32_t vShiftAdd = vShift | 2;
     // std::cout << "check v: " << std::bitset<32>(vShiftAdd) << std::endl;
 
-    boost::endian::endian_buffer<boost::endian::order::little, uint32_t, 32> buf{};
-    buf = vShiftAdd;
+    // boost::endian::endian_buffer<boost::endian::order::little, uint32_t, 32> buf{};
+    // buf = vShiftAdd;
 
     std::deque<uint8_t> check;
 
-    check.push_back(buf.data()[0]);
-    check.push_back(buf.data()[1]);
-    check.push_back(buf.data()[2]);
-    check.push_back(buf.data()[3]);
+    const size_t bytes = 4;
+    for (size_t i = 0; i < bytes; i++) {
+        uint8_t elem = (vShiftAdd >> (i * 8)) & 0xFF;
+        check.push_back(elem);
+    }
+
+    // check.push_back(buf.data()[0]);
+    // check.push_back(buf.data()[1]);
+    // check.push_back(buf.data()[2]);
+    // check.push_back(buf.data()[3]);
 
 
     // printEncodedStream<uint32_t>(check, value);
@@ -124,11 +134,16 @@ std::deque<uint8_t> CompactIntegerEncoder::encodeBigByte(const int64_t& value)
     size_t numLen = calculateByteSize(value);
     // std::cout << "Number length is: " << numLen << std::endl;
 
-    boost::endian::endian_buffer<boost::endian::order::little, uint64_t, 64> buf{};
-    buf = value;
+    // boost::endian::endian_buffer<boost::endian::order::little, uint64_t, 64> buf{};
+    // buf = value;
 
-    for (int i = 0; i < numLen; i++) {
-        check.push_back(buf.data()[i]);
+    // for (int i = 0; i < numLen; i++) {
+        // check.push_back(buf.data()[i]);
+    // }
+
+    for (size_t i = 0; i < numLen; i++) {
+        uint8_t elem = (value >> (i * 8)) & 0xFF;
+        check.push_back(elem);
     }
 
     numLen = numLen + 4;

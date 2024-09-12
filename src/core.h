@@ -4,12 +4,15 @@
 #include <iostream>
 #include <deque>
 #include <vector>
-#include <boost/endian/arithmetic.hpp>
+// #include <boost/endian/arithmetic.hpp>
+#include <bit>
 #include <sstream>
 #include <iomanip>
 #include <map>
-#include <boost/any.hpp>
-#include <boost/type_index.hpp>
+// #include <boost/any.hpp>
+#include <any>
+// #include <boost/type_index.hpp>
+#include <typeinfo>
 
 #define TYPEINFO_FIXED8 "unsigned char"
 #define TYPEINFO_FIXED16 "u_16"
@@ -17,17 +20,17 @@
 enum class DataType {Fixed8, Fixed16, Fixed32, Fixed64, Result, Compact, Option, Container, Tuple, Struct, 
     Boolean, String, Unknown};
 
-typedef std::pair<DataType, boost::any> node;
+typedef std::pair<DataType, std::any> node;
 
 struct RevertedValue
 {
-    boost::any _value;
+    std::any _value;
 
     template<typename T>
     operator T() const   
     {
        T convertedValue;
-       if (convertedValue = boost::any_cast<T>(_value))
+       if (convertedValue = std::any_cast<T>(_value))
        { 
             return convertedValue;
        }
@@ -54,7 +57,7 @@ class ScaleArray {
 
         RevertedValue convertToOriginalType(const node &node)
         {
-            const boost::any& elem = node.second;
+            const std::any& elem = node.second;
 
                 // std::cout << "ping" << std::endl;
                 return { elem };

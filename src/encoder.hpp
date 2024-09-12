@@ -241,11 +241,12 @@ private:
         const size_t bytes = sizeof(value);
         const size_t bits = bytes * 8;
 
-        boost::endian::endian_buffer<boost::endian::order::little, T, bits> buf{};
-        buf = value;
+        // boost::endian::endian_buffer<boost::endian::order::little, T, bits> buf{};
+        // buf = value;
         std::deque<uint8_t> check;
         for (int i = 0; i < bytes; i++) {
-            check.push_back(buf.data()[i]);
+            uint8_t elem = (value >> (8 * i)) & 0xFF;
+            check.push_back(elem);
         }
 
         return check;
