@@ -15,9 +15,7 @@ void printEncodedStream(const std::deque<uint8_t>& data, const T& value) {
 
 class CompactIntegerEncoder {
 public:
-    CompactIntegerEncoder() {
-        // std::cout << "CIEncoder created" << std::endl;
-    }
+    CompactIntegerEncoder() {}
     CompactIntegerEncoder(const CompactIntegerEncoder& other) = default;
     CompactIntegerEncoder& operator=(const CompactIntegerEncoder& other) = default;
     ~CompactIntegerEncoder()
@@ -241,8 +239,6 @@ private:
         const size_t bytes = sizeof(value);
         const size_t bits = bytes * 8;
 
-        // boost::endian::endian_buffer<boost::endian::order::little, T, bits> buf{};
-        // buf = value;
         std::deque<uint8_t> check;
         for (int i = 0; i < bytes; i++) {
             uint8_t elem = (value >> (8 * i)) & 0xFF;

@@ -111,7 +111,6 @@ public:
         }
         else if (type == DataType::Compact) {
             uint8_t mode = mData[0] & 0b11;
-            // printf("mode is: %d\n", mode);
             if (mode == 0) {
                 res = (static_cast<uint32_t>(mData[0]) >> 2);
                 mData.erase(mData.begin());
@@ -128,7 +127,6 @@ public:
                 mData.erase(mData.begin(), mData.begin() + 4);
             }
             if (mode == 3) {
-                // std::cout << "this mode" << std::endl;
                 uint8_t len = mData[0];
                 len = len >> 2;
                 len = len - 4;

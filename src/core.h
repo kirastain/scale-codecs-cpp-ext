@@ -4,14 +4,11 @@
 #include <iostream>
 #include <deque>
 #include <vector>
-// #include <boost/endian/arithmetic.hpp>
 #include <bit>
 #include <sstream>
 #include <iomanip>
 #include <map>
-// #include <boost/any.hpp>
 #include <any>
-// #include <boost/type_index.hpp>
 #include <typeinfo>
 
 #define TYPEINFO_FIXED8 "unsigned char"
@@ -59,8 +56,7 @@ class ScaleArray {
         {
             const std::any& elem = node.second;
 
-                // std::cout << "ping" << std::endl;
-                return { elem };
+            return { elem };
         }
 
         std::map<std::string, node>::const_iterator begin()
