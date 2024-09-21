@@ -84,11 +84,11 @@ public:
 
 
     template <typename T,
-    typename = std::enable_if<std::is_same_v<uint8_t, T> || 
-                                std::is_same_v<uint16_t, T> ||
-                                std::is_same_v<uint32_t, T> ||
-                                std::is_same_v<uint64_t, T> ||
-                                std::is_same_v<bool, T> >>
+    typename = std::enable_if<std::is_same<uint8_t, T>::value || 
+                                std::is_same<uint16_t, T>::value ||
+                                std::is_same<uint32_t, T>::value ||
+                                std::is_same<uint64_t, T>::value ||
+                                std::is_same<bool, T>::value >>
     void encode(DataType type, T value)
     {
         std::deque<uint8_t> data;
@@ -170,12 +170,11 @@ public:
         auto it = arr.begin();
 
         while (it != arr.end()) {
-            node elem = it->second;
-            if (it->second.first == DataType::Fixed8) {
+            Node elem = it->second;
+            if (it->second._type == DataType::Fixed8) {
                 uint8_t value = arr.convertToOriginalType(elem);
-                encode<uint8_t>(elem.first, value);
+                encode<uint8_t>(elem._type, value);
             }
-            // encode(it->second.first, it->second.second);
             // std::cout << "encoded" << std::endl;
             it++;
         }
@@ -190,10 +189,10 @@ private:
     Fixed uints or Compact ints
     */
     template <typename T, 
-        typename = std::enable_if<std::is_same_v<uint8_t, T> || 
-                                std::is_same_v<uint16_t, T> ||
-                                std::is_same_v<uint32_t, T> ||
-                                std::is_same_v<uint64_t, T> >>
+        typename = std::enable_if<std::is_same<uint8_t, T>::value || 
+                                std::is_same<uint16_t, T>::value ||
+                                std::is_same<uint32_t, T>::value ||
+                                std::is_same<uint64_t, T>::value >>
     std::deque<uint8_t> encodeFixedOrCompact(DataType type, T value)
     {
         std::deque<uint8_t> data;
@@ -209,10 +208,10 @@ private:
     }
 
     template <typename T,
-        typename = std::enable_if<std::is_same_v<uint8_t, T> || 
-                                    std::is_same_v<uint16_t, T> ||
-                                    std::is_same_v<uint32_t, T> ||
-                                    std::is_same_v<uint64_t, T> >>
+        typename = std::enable_if<std::is_same<uint8_t, T>::value || 
+                                    std::is_same<uint16_t, T>::value ||
+                                    std::is_same<uint32_t, T>::value ||
+                                    std::is_same<uint64_t, T>::value >>
     std::deque<uint8_t> encodeCompactInt(uint64_t value)
     {
         CompactIntegerEncoder ciCoder;
@@ -232,8 +231,9 @@ private:
     }
 
     template <typename T, 
-        typename = std::enable_if<std::is_same_v<uint8_t, T> || std::is_same_v<uint16_t, T> ||
-        std::is_same_v<uint32_t, T> >>
+        typename = std::enable_if<std::is_same<uint8_t, T>::value || 
+        std::is_same<uint16_t, T>::value ||
+        std::is_same<uint32_t, T>::value >>
     std::deque<uint8_t> encodeValue(T value)
     {
         const size_t bytes = sizeof(value);
@@ -251,22 +251,22 @@ private:
     template <typename T>
         DataType getValueDataType(T elem)
         {
-            if (std::is_same_v<uint8_t, T>) {
+            if (std::is_same<uint8_t, T>::value) {
                 return DataType::Fixed8;
             }
-            else if (std::is_same_v<uint16_t, T>) {
+            else if (std::is_same<uint16_t, T>::value) {
                 return DataType::Fixed16;
             }
-            else if (std::is_same_v<uint32_t, T>) {
+            else if (std::is_same<uint32_t, T>::value) {
                 return DataType::Fixed32;
             }
-            else if (std::is_same_v<uint64_t, T>) {
+            else if (std::is_same<uint64_t, T>::value) {
                 return DataType::Compact;
             }
-            else if (std::is_same_v<std::string, T>) {
+            else if (std::is_same<std::string, T>::value) {
                 return DataType::String;
             }
-            else if (std::is_same_v<bool, T>) {
+            else if (std::is_same<bool, T>::value) {
                 return DataType::Boolean;
             }
             else {

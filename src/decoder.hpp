@@ -89,14 +89,14 @@ public:
     }
 
     template <typename T,
-    typename = std::enable_if<std::is_same_v<uint8_t, T> || 
-                                std::is_same_v<uint16_t, T> ||
-                                std::is_same_v<uint32_t, T> ||
-                                std::is_same_v<uint64_t, T> ||
-                                std::is_same_v<int8_t, T> ||
-                                std::is_same_v<int16_t, T> ||
-                                std::is_same_v<int32_t, T> || 
-                                std::is_same_v<int64_t, T> >>
+    typename = std::enable_if<std::is_same<uint8_t, T>::value || 
+                                std::is_same<uint16_t, T>::value ||
+                                std::is_same<uint32_t, T>::value ||
+                                std::is_same<uint64_t, T>::value ||
+                                std::is_same<int8_t, T>::value ||
+                                std::is_same<int16_t, T>::value ||
+                                std::is_same<int32_t, T>::value || 
+                                std::is_same<int64_t, T>::value >>
     void decode(DataType type, T& res)
     {
         if (type == DataType::Fixed8 || type == DataType::Fixed16 || type == DataType::Fixed32) {

@@ -8,8 +8,12 @@
 #include <sstream>
 #include <iomanip>
 #include <map>
-#include <any>
+// #include <any>
 #include <typeinfo>
+
+// #include "any.h"
+// #include "../include/yato/any.h"
+#include "../include/any.h"
 
 #define TYPEINFO_FIXED8 "unsigned char"
 #define TYPEINFO_FIXED16 "u_16"
@@ -17,21 +21,23 @@
 enum class DataType {Fixed8, Fixed16, Fixed32, Fixed64, Result, Compact, Option, Container, Tuple, Struct, 
     Boolean, String, Unknown};
 
-typedef std::pair<DataType, std::any> node;
+struct Node {
+    DataType _type;
+    libany::any _value;
+};
+// #endif
 
 struct RevertedValue
 {
-    std::any _value;
+    libany::any _value;
 
     template<typename T>
-    operator T() const   
+    operator T()    
     {
-       T convertedValue;
-       if (convertedValue = std::any_cast<T>(_value))
-       { 
-            return convertedValue;
-       }
-       else throw std::runtime_error("conversion failed");
+    //    std::cout << "converted to in progress " << std::endl;
+       T convertedValue = libany::any_cast<T>(_value);
+    //    std::cout << "converted to: " << convertedValue << std::endl;
+       return convertedValue;
     }
 };
 
@@ -46,51 +52,66 @@ class ScaleArray {
         void insert(std::string name, T elem)
         {
             //fix this, need to keep type
-            node newNode = std::make_pair(getValueDataType(elem), elem);
+            libany::any elemP(elem);
+
+            // uint8_t check = libany::any_cast<uint8_t>(elemP);
+            // printf("check in insert: %d\n", check);
+
+            // node newNode = std::make_pair(getValueDataType(elem), elemP);
+            Node newNode;
+            newNode._type = getValueDataType(elem);
+            newNode._value = elemP;
+
+            // uint8_t check1 = libany::any_cast<uint8_t>(newNode._value);
+            // printf("check in insert: %d\n", check1);
 
             elems[name] = newNode;
-            // std::cout << "recorded: " << getTypeInfo(elems[name].first) << std::endl;
+            // std::cout << "recorded: " << getTypeInfo(elems[name]._type) << std::endl;
+            // uint8_t check2 = libany::any_cast<uint8_t>(elems[name]._value);
+            // printf("check in insert: %d\n", check2);
         }
 
-        RevertedValue convertToOriginalType(const node &node)
+        RevertedValue convertToOriginalType(Node &node)
         {
-            const std::any& elem = node.second;
+            libany::any& elem = node._value;
 
             return { elem };
         }
 
-        std::map<std::string, node>::const_iterator begin()
+        std::map<std::string, Node>::const_iterator begin()
         {
             return elems.begin();
         }
 
-        std::map<std::string, node>::const_iterator end()
+        std::map<std::string, Node>::const_iterator end()
         {
             return elems.end();
         }
 
-        std::map<std::string, node> elems;
+        std::map<std::string, Node> elems;
 
         private:
         template <typename T>
         DataType getValueDataType(T elem)
         {
-            if (std::is_same_v<uint8_t, T>) {
+            // if (std::is_same_v<uint8_t, T>) {
+            if (std::is_same<uint8_t, T>::value) {
+
                 return DataType::Fixed8;
             }
-            else if (std::is_same_v<uint16_t, T>) {
+            else if (std::is_same<uint16_t, T>::value) {
                 return DataType::Fixed16;
             }
-            else if (std::is_same_v<uint32_t, T>) {
+            else if (std::is_same<uint32_t, T>::value) {
                 return DataType::Fixed32;
             }
-            else if (std::is_same_v<uint64_t, T>) {
+            else if (std::is_same<uint64_t, T>::value) {
                 return DataType::Compact;
             }
-            else if (std::is_same_v<std::string, T>) {
+            else if (std::is_same<std::string, T>::value) {
                 return DataType::String;
             }
-            else if (std::is_same_v<bool, T>) {
+            else if (std::is_same<bool, T>::value) {
                 return DataType::Boolean;
             }
             else {

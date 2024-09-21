@@ -5,7 +5,7 @@ TEST(Node, FixedInts_u8)
 {
     ScaleArray arr;
     uint8_t a = 8;
-    uint16_t b = 16;
+    // uint16_t b = 16;
     arr.insert("u8", a);
     // arr.insert("u16", b);
 
