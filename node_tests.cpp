@@ -5,9 +5,9 @@ TEST(Node, FixedInts_u8)
 {
     ScaleArray arr;
     uint8_t a = 8;
-    // uint16_t b = 16;
+    uint16_t b = 16;
     arr.insert("u8", a);
-    // arr.insert("u16", b);
+    arr.insert("u16", b);
 
     // auto it = arr.begin();
 
@@ -25,8 +25,12 @@ TEST(Node, FixedInts_u8)
     Decoder decoder(s);
 
     uint8_t value0;
+    uint16_t value1;
 
     decoder.decode(DataType::Fixed8, value0);
+    decoder.decode(DataType::Fixed16, value1);
 
     ASSERT_EQ(a, value0);
+    ASSERT_EQ(b, value1);
+
 }

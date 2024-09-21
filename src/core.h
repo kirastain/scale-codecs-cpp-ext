@@ -66,6 +66,7 @@ class ScaleArray {
             // printf("check in insert: %d\n", check1);
 
             elems[name] = newNode;
+            _names.push_back(name);
             // std::cout << "recorded: " << getTypeInfo(elems[name]._type) << std::endl;
             // uint8_t check2 = libany::any_cast<uint8_t>(elems[name]._value);
             // printf("check in insert: %d\n", check2);
@@ -88,7 +89,9 @@ class ScaleArray {
             return elems.end();
         }
 
+        //value
         std::map<std::string, Node> elems;
+        std::vector<std::string> _names;
 
         private:
         template <typename T>
