@@ -54,7 +54,7 @@ target_include_directories(scale-codecs-lib
 enable_testing()
 
 add_executable(test_lib)
-target_sources(test_lib PRIVATE simple_tests.cpp node_tests.cpp)
+target_sources(test_lib PRIVATE simple_tests.cpp node_tests.cpp metadata_tests.cpp)
 target_link_libraries(test_lib scale-codecs-lib GTest::gtest_main)
 
 include(GoogleTest)
