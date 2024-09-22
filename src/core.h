@@ -15,14 +15,17 @@
 // #include "../include/yato/any.h"
 #include "../include/any.h"
 
-#define TYPEINFO_FIXED8 "unsigned char"
-#define TYPEINFO_FIXED16 "u_16"
+#define TYPEINFO_FIXED8 "u8"
+#define TYPEINFO_FIXED16 "u16"
+#define TYPEINFO_FIXED32 "u32"
+#define TYPEINFO_COMPACT "compact"
+
 
 enum class DataType {Fixed8, Fixed16, Fixed32, Fixed64, Result, Compact, Option, Container, Tuple, Struct, 
     Boolean, String, Unknown};
 
 struct Node {
-    DataType _type;
+    DataType _type = DataType::Unknown;
     libany::any _value;
 };
 // #endif
@@ -59,7 +62,12 @@ class ScaleArray {
 
             // node newNode = std::make_pair(getValueDataType(elem), elemP);
             Node newNode;
-            newNode._type = getValueDataType(elem);
+            if (name == TYPEINFO_COMPACT) {
+                newNode._type = DataType::Compact;
+            }
+            else {
+                newNode._type = getValueDataType(elem);
+            }
             newNode._value = elemP;
 
             // uint8_t check1 = libany::any_cast<uint8_t>(newNode._value);
@@ -98,8 +106,8 @@ class ScaleArray {
         DataType getValueDataType(T elem)
         {
             // if (std::is_same_v<uint8_t, T>) {
+            
             if (std::is_same<uint8_t, T>::value) {
-
                 return DataType::Fixed8;
             }
             else if (std::is_same<uint16_t, T>::value) {
@@ -117,6 +125,7 @@ class ScaleArray {
             else if (std::is_same<bool, T>::value) {
                 return DataType::Boolean;
             }
+            //TODO:: add vector, options, etc.
             else {
                 return DataType::Unknown;
             }

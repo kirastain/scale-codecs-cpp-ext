@@ -177,6 +177,14 @@ public:
                 uint16_t value = arr.convertToOriginalType(elem);
                 encode<uint16_t>(elem._type, value);
             }
+            else if (elem._type == DataType::Fixed32) {
+                uint32_t value = arr.convertToOriginalType(elem);
+                encode<uint32_t>(elem._type, value);
+            }
+            else if (elem._type == DataType::Compact) {
+                uint64_t value = arr.convertToOriginalType(elem);
+                encode(elem._type, value);
+            }
             // std::cout << "encoded" << std::endl;
             // printData();
         }
