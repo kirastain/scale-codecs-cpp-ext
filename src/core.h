@@ -19,13 +19,16 @@
 #define TYPEINFO_FIXED16 "u16"
 #define TYPEINFO_FIXED32 "u32"
 #define TYPEINFO_COMPACT "compact"
+#define TYPEINFO_CONTAINER "container"
 
 
 enum class DataType {Fixed8, Fixed16, Fixed32, Fixed64, Result, Compact, Option, Container, Tuple, Struct, 
     Boolean, String, Unknown};
+enum class DataClass { Simple, Collection };
 
 struct Node {
     DataType _type = DataType::Unknown;
+    DataClass _class = DataClass::Simple;
     libany::any _value;
 };
 // #endif
@@ -78,6 +81,25 @@ class ScaleArray {
             // std::cout << "recorded: " << getTypeInfo(elems[name]._type) << std::endl;
             // uint8_t check2 = libany::any_cast<uint8_t>(elems[name]._value);
             // printf("check in insert: %d\n", check2);
+        }
+
+        template <typename T>
+        void insert(std::string name, std::vector<T> elem)
+        {
+            libany::any elemP(elem);
+            
+            Node newNode;
+            if (name == TYPEINFO_COMPACT) {
+                newNode._type = DataType::Compact;
+            }
+            else {
+                newNode._type = getValueDataType(elem);
+            }
+            newNode._value = elemP;
+
+
+            elems[name] = newNode;
+            _names.push_back(name);
         }
 
         RevertedValue convertToOriginalType(Node &node)

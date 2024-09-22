@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "scale-codecs-lib.hpp"
 
+
 TEST(Node, FixedInts)
 {
     ScaleArray arr;
@@ -75,4 +76,36 @@ TEST(Node, Compact)
     ASSERT_EQ(a, value0);
     ASSERT_EQ(b, value1);
     ASSERT_EQ(c, value2);
+}
+
+TEST(Node, Container)
+{
+    ScaleArray arr;
+    std::vector<uint16_t> testVec = {3, 141, 290, 62, 34};
+    arr.insert("container", testVec);
+
+    //can do defines with types
+    // get type id and give them names, then compare to those without the need to get extra meta
+    // data with strings
+
+    // auto it = arr.begin();
+
+    // uint8_t check = arr.convertToOriginalType(it->second);
+    // printf("%d\n", check);
+
+    Encoder coder;
+
+    coder.encode(arr);
+
+    std::string s = coder.getDataAsByteArray();
+
+    // std::cout << s << std::endl;
+
+    Decoder decoder(s);
+
+    std::vector<uint16_t> value0;
+
+    decoder.decode(DataType::Container, value0);
+
+    ASSERT_EQ(testVec, value0);
 }
