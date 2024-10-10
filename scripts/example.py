@@ -2,6 +2,9 @@ from substrateinterface import Keypair, SubstrateInterface
 from substrateinterface.storage import StorageKey
 from substrateinterface.exceptions import SubstrateRequestException
 from scalecodec.base import ScaleBytes, RuntimeConfigurationObject, ScaleType
+
+import binascii
+
 # WebSocket connection to Vara Testnet.
 ws = SubstrateInterface(url="wss://testnet.vara.network")
 
@@ -42,8 +45,101 @@ updated_obj = ws.runtime_config.create_scale_object(
             )
 updated_obj.decode()
 
+print(key.value_scale_type)
+print()
+# print(ws.metadata)
+
+# bytes_check = b'080000000000000082c9b343551702000000010000000000c244223d00020100'
+# test_decode = binascii.unhexlify(bytes_check)
+# print(test_decode)
+# tdc = test_decode.decode('utf-8')
+# print(tdc)
+
+res_file = open("metadata_fromscript.json", "w")
+res_file.write(ws.metadata)
+res_file.close()
+
 # Decoded data
-print(updated_obj)
+# print(updated_obj)
 """
-[{'phase': 'ApplyExtrinsic', 'extrinsic_idx': 0, 'event': {'event_index': '0000', 'module_id': 'System', 'event_id': 'ExtrinsicSuccess', 'attributes': {'dispatch_info': {'weight': {'ref_time': 283964000, 'proof_size': 1493}, 'class': 'Mandatory', 'pays_fee': 'Yes'}}}, 'event_index': 0, 'module_id': 'System', 'event_id': 'ExtrinsicSuccess', 'attributes': {'dispatch_info': {'weight': {'ref_time': 283964000, 'proof_size': 1493}, 'class': 'Mandatory', 'pays_fee': 'Yes'}}, 'topics': []}, {'phase': 'ApplyExtrinsic', 'extrinsic_idx': 1, 'event': {'event_index': '0000', 'module_id': 'System', 'event_id': 'ExtrinsicSuccess', 'attributes': {'dispatch_info': {'weight': {'ref_time': 256414000, 'proof_size': 0}, 'class': 'Mandatory', 'pays_fee': 'No'}}}, 'event_index': 0, 'module_id': 'System', 'event_id': 'ExtrinsicSuccess', 'attributes': {'dispatch_info': {'weight': {'ref_time': 256414000, 'proof_size': 0}, 'class': 'Mandatory', 'pays_fee': 'No'}}, 'topics': []}]
+[{
+    'phase': 'ApplyExtrinsic', 
+    'extrinsic_idx': 0, 
+    'event': 
+        {
+            'event_index': '0000', 
+            'module_id': 'System', 
+            'event_id': 'ExtrinsicSuccess', 
+            'attributes': 
+                {
+                    'dispatch_info': 
+                        {
+                            'weight': 
+                                {
+                                    'ref_time': 283964000, 
+                                    'proof_size': 1493
+                                }, 
+                            'class': 'Mandatory', 
+                            'pays_fee': 'Yes'
+                        }
+                }
+        }, 
+        'event_index': 0, 
+        'module_id': 'System', 
+        'event_id': 'ExtrinsicSuccess', 
+        'attributes': 
+            {
+                'dispatch_info': 
+                    {
+                        'weight': 
+                            {
+                                'ref_time': 283964000, 
+                                'proof_size': 1493
+                            }, 
+                        'class': 'Mandatory', 
+                        'pays_fee': 'Yes'
+                    }
+            }, 
+        'topics': []
+    }, 
+    {
+    'phase': 'ApplyExtrinsic', 
+    'extrinsic_idx': 1, 
+    'event': 
+        {
+            'event_index': '0000', 
+            'module_id': 'System', 
+            'event_id': 'ExtrinsicSuccess', 
+            'attributes': 
+                {
+                    'dispatch_info': 
+                        {
+                            'weight': 
+                                {
+                                    'ref_time': 256414000, 
+                                    'proof_size': 0
+                                }, 
+                            'class': 'Mandatory', 
+                            'pays_fee': 'No'
+                        }
+                }
+        }, 
+        'event_index': 0, 
+        'module_id': 'System', 
+        'event_id': 'ExtrinsicSuccess', 
+        'attributes': 
+            {
+                'dispatch_info': 
+                    {
+                        'weight': 
+                            {
+                                'ref_time': 256414000, 
+                                'proof_size': 0
+                            }, 
+                        'class': 'Mandatory', 
+                        'pays_fee': 'No'
+                    }
+            }, 
+        'topics': []
+    }]
 """

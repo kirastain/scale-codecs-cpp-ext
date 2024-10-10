@@ -73,6 +73,7 @@ public:
 
     void decode(DataType type, std::string &res, const uint32_t &len) {
         if (type == DataType::String) {
+            printf("decoded len is %d\n", len);
             for (size_t i = 0; i < len; i++) {
                 res += mData[i];    
             }
