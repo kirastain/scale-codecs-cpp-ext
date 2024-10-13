@@ -1,0 +1,44 @@
+{
+    "name": "sequence",
+    "sequence": {
+        "event": {
+            "name": "variant",
+            "variant": {
+                "name": "variant",
+                "variant": {
+                    "class": {
+                        "name": "Normal"
+                    },
+                    "name": "composite",
+                    "pays_fee": {
+                        "name": "Yes"
+                    },
+                    "weight": {
+                        "name": "composite",
+                        "proof_size": {
+                            "name": "compact"
+                        },
+                        "ref_time": {
+                            "name": "compact"
+                        }
+                    }
+                }
+            }
+        },
+        "name": "composite",
+        "phase": {
+            "name": "variant",
+            "variant": {
+                "name": "primitive"
+            }
+        },
+        "topics": {
+            "name": "sequence",
+            "sequence": {
+                "name": {
+                    "name": "array"
+                }
+            }
+        }
+    }
+}

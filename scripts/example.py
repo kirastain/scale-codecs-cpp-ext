@@ -4,6 +4,8 @@ from substrateinterface.exceptions import SubstrateRequestException
 from scalecodec.base import ScaleBytes, RuntimeConfigurationObject, ScaleType
 
 import binascii
+import re
+import json
 
 # WebSocket connection to Vara Testnet.
 ws = SubstrateInterface(url="wss://testnet.vara.network")
@@ -55,12 +57,17 @@ print()
 # tdc = test_decode.decode('utf-8')
 # print(tdc)
 
-res_file = open("metadata_fromscript.json", "w")
-res_file.write(ws.metadata)
-res_file.close()
+# res_file = open("metadata_fromscript.json", "w")
+# res_file.write(ws.metadata)
+# res_file.close()
 
 # Decoded data
+res_file = open("decoded_python.json", "w")
 # print(updated_obj)
+# res_str = re.sub("(\w+):", r'"\1":',  updated_obj.__str__())
+res_str = str(updated_obj).replace("'", '"')
+res_file.write(res_str)
+res_file.close()
 """
 [{
     'phase': 'ApplyExtrinsic', 

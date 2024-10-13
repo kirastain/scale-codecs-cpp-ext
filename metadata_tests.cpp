@@ -7,10 +7,17 @@
 
 TEST(Meta, Simple)
 {
-    MetadataParser p("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json");
+    std::string rawData = "080000000000000082c9b343551702000000010000000000c244223d00020100";
+    MetadataParser p("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json", rawData);
     
-    auto type = p.getFullMetadata(19);
-    std::cout << type << std::endl;
+    auto type = p.getFullMetadata(18);
+
+    std::ofstream outFile("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/decoded_cpp.json");
+    outFile << type;
+    outFile.close();
+
+    // p.printDecodedResult();
+    // std::cout << type << std::endl;
 
     // auto metadata = data[1];
     // auto m2 = metadata["V14"]["types"]["types"];
