@@ -1,18 +1,1 @@
-{
-    "event": {
-        "class": {
-            "name": "Normal"
-        },
-        "pays_fee": {
-            "name": "Yes"
-        },
-        "weight": {
-            "proof_size": 233233,
-            "ref_time": 233233
-        }
-    },
-    "phase": 4,
-    "topics": {
-        "name": "array"
-    }
-}
+{"def":{"def":{"class":"Normal","pays_fee":"Yes"},"event":"System","name":"ExtrinsicSuccess","phase":"ApplyExtrinsic","topics":{"def":"array"}}}

@@ -67,15 +67,26 @@ public:
                 if (typeFields[i].contains("name") && !typeFields[i]["name"].is_null()) {
                     std::cout << "name ppresent" << std::endl;
                     nlohmann::json check = getFullMetadata(typeIdx);
-                    // std::cout << check << std::endl;
-                    currentJsonBlock[typeFields[i]["name"]] = check;
+                    std::cout << "composite[i] check: " << check << std::endl;
+                    if (check.contains("name")) {
+                        currentJsonBlock[typeFields[i]["name"]] = check["name"];
+                    }
+                    if (check.contains("def") && !check.contains("name")) {
+                        currentJsonBlock[typeFields[i]["name"]] = check["def"];
+                    }
+                    else if (check.contains("def")) {
+                        std::cout << "bla: " << check["def"] << std::endl;
+                        currentJsonBlock.merge_patch(check["def"]);
+                        std::cout << currentJsonBlock << std::endl;
+                    }
                 }
                 else {
                     std::cout << "name not present" << std::endl;
                     nlohmann::json check = getFullMetadata(typeIdx);
                     std::cout << check << std::endl;
-                    currentJsonBlock["name"] = check;
+                    currentJsonBlock.merge_patch(check);
                 }
+                std::cout << "checking now: " << currentJsonBlock << std::endl;
                 std::cout << "next field" << std::endl;
                 // mDecodedRes[0][typeFields[i]["name"]] = typeFields[i]["type"]["type"][""]
             }
@@ -90,26 +101,21 @@ public:
             // mDecoder->decode(DataType::Compact, variantIdx);
             // printf("decoded idx for the variant: %d\n", variantIdx);
             nlohmann::json chosenVariant = typeDef["variant"]["variants"][variantIdx];
+            currentJsonBlock["name"] = chosenVariant["name"];
+
             if (chosenVariant["fields"].size() != 0) {
                 // std::cout << "variant found: " << chosenVariant["fields"] << std::endl;
                 uint32_t variantTypeIdx = chosenVariant["fields"][0]["type"];
                 // printf("variant index type is %d\n", variantTypeIdx);
-                currentJsonBlock = getFullMetadata(variantTypeIdx);
+                currentJsonBlock["def"] = getFullMetadata(variantTypeIdx);
                 std::cout << "variant written" << std::endl;
-                return currentJsonBlock;
             }
-            else {
-                // std::cout << "variant with just a name" << std::endl;
-                currentJsonBlock["name"] = chosenVariant["name"];
-                std::cout << "variant written" << std::endl;
-
                 return currentJsonBlock;
-            }
 
         }
         else if (typeDef.contains("array")) {
             // std::cout << "array" << std::endl;
-            currentJsonBlock = "array";
+            currentJsonBlock["def"] = "array";
             std::cout << "array done" << std::endl;
 
             return currentJsonBlock;
@@ -120,7 +126,7 @@ public:
 
             //TODO: this is to be decoded from the data
             uint32_t primNum = 4;
-            currentJsonBlock = primNum;
+            currentJsonBlock["def"] = primNum;
             // currentJsonBlock["name"] = "primitive";
             
             // std::cout << "done" << std::endl;
@@ -132,7 +138,7 @@ public:
             std::cout << "compact" << std::endl;
 
             uint32_t compactNum = 233233;
-            currentJsonBlock = compactNum;
+            currentJsonBlock["def"] = compactNum;
 
             // currentJsonBlock["name"] = "compact";
             std::cout << "compact done" << std::endl;
@@ -146,7 +152,7 @@ public:
             nlohmann::json& def = typeDef["sequence"];
             if (!def.empty()) {
                 uint32_t defTypeIdx = def["type"];
-                currentJsonBlock = getFullMetadata(defTypeIdx);
+                currentJsonBlock["def"] = getFullMetadata(defTypeIdx);
             std::cout << "sequence done" << std::endl;
 
                 return currentJsonBlock;
