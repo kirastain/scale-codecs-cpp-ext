@@ -5,6 +5,27 @@
 
 #include <fstream>
 
+TEST(Meta, Simple_ArrayTypes)
+{
+    std::string rawData = "080000000000000082c9b343551702000000010000000000c244223d00020100";
+
+    MetadataParser p1("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json", rawData);
+    auto res1 = p1.getFullMetadata(1);
+    std::cout << res1 << std::endl;
+
+    MetadataParser p17("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json", rawData);
+    auto res17 = p17.getFullMetadata(17);
+    std::cout << res17 << std::endl;
+
+    MetadataParser p70("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json", rawData);
+    auto res70 = p70.getFullMetadata(70);
+    std::cout << res70 << std::endl;
+
+    MetadataParser p73("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json", rawData);
+    auto res73 = p73.getFullMetadata(73);
+    std::cout << res73 << std::endl;
+}
+
 TEST(Meta, Simple)
 {
     std::string rawData = "080000000000000082c9b343551702000000010000000000c244223d00020100";

@@ -14,6 +14,14 @@ static const std::string META_TYPE_U128 = "u128";
 static const std::string META_TYPE_BOOL = "bool";
 static const std::string META_TYPE_STR = "str";
 
+/*
+Metadata general types:
+- "primitive"
+- "array"           // types: 1, 17, 70, 73, 85, 97, 98, 166...
+- "composite"
+- 
+*/
+
 class MetadataParser {
 public:
     MetadataParser(std::string filename, std::string inputBytes) {
@@ -40,6 +48,17 @@ public:
     //recursion end is the primitice type
     //metadata should call on decoder
 
+    std::string getValueKeyName(std::string valueName) {
+        if (valueName == "ApplyExtrinsic") {
+            return "extrinsic_idx";
+        }
+        else {
+            std::string tempKey = "temp_key_" + std::to_string(tempKeyIdx);
+            tempKeyIdx++;
+            return tempKey;
+        }
+    }
+
     nlohmann::json getTypeMetadata(uint32_t idx) {
         if (mTypes[idx].is_null()) {
             std::cout << "MetadataParser: type idx not found" << std::endl;
@@ -65,26 +84,37 @@ public:
                 // std::cout << typeFields[i]["name"] << std::endl;
                 uint32_t typeIdx = typeFields[i]["type"];
                 if (typeFields[i].contains("name") && !typeFields[i]["name"].is_null()) {
-                    std::cout << "name ppresent" << std::endl;
+                    // std::cout << "name ppresent" << std::endl;
                     nlohmann::json check = getFullMetadata(typeIdx);
-                    std::cout << "composite[i] check: " << check << std::endl;
+                    // std::cout << "composite[i] check: " << check << std::endl;
                     if (check.contains("name")) {
-                        currentJsonBlock[typeFields[i]["name"]] = check["name"];
+                        if (check.contains("def")) {
+                            currentJsonBlock[typeFields[i]["name"]] = check["def"];
+                        }
+                        else {
+                            currentJsonBlock[typeFields[i]["name"]] = check;
+                        }
                     }
-                    if (check.contains("def") && !check.contains("name")) {
-                        currentJsonBlock[typeFields[i]["name"]] = check["def"];
-                    }
-                    else if (check.contains("def")) {
-                        std::cout << "bla: " << check["def"] << std::endl;
-                        currentJsonBlock.merge_patch(check["def"]);
-                        std::cout << currentJsonBlock << std::endl;
+                    else {                        
+                        std::string valueName = (check.contains("name")) ? check["name"] : "";
+                        std::string tempKey = getValueKeyName(valueName);
+
+                        if (check.contains("def")) {
+                            currentJsonBlock[tempKey] = check["def"];
+                        }
+                        else {
+                            currentJsonBlock[tempKey] = check;
+                        }
                     }
                 }
                 else {
                     std::cout << "name not present" << std::endl;
+                    
                     nlohmann::json check = getFullMetadata(typeIdx);
-                    std::cout << check << std::endl;
-                    currentJsonBlock.merge_patch(check);
+                    std::string valueName = (check.contains("name")) ? check["name"] : "";
+                    std::string tempKey = getValueKeyName(valueName);
+                    // std::cout << check << std::endl;
+                    currentJsonBlock[tempKey] = check;
                 }
                 std::cout << "checking now: " << currentJsonBlock << std::endl;
                 std::cout << "next field" << std::endl;
@@ -115,8 +145,9 @@ public:
         }
         else if (typeDef.contains("array")) {
             // std::cout << "array" << std::endl;
-            currentJsonBlock["def"] = "array";
-            std::cout << "array done" << std::endl;
+            // currentJsonBlock["def"] = "array";
+            // std::cout << "array done" << std::endl;
+            currentJsonBlock = decodeArrayType(typeDef["array"]);
 
             return currentJsonBlock;
         }
@@ -124,15 +155,16 @@ public:
             // std::cout << "primitive" << std::endl;
             //swithc all block with the value
 
-            //TODO: this is to be decoded from the data
-            uint32_t primNum = 4;
-            currentJsonBlock["def"] = primNum;
-            // currentJsonBlock["name"] = "primitive";
+            // //TODO: this is to be decoded from the data
+            // uint32_t primNum = 4;
+            // currentJsonBlock["def"] = primNum;
+            // // currentJsonBlock["name"] = "primitive";
             
-            // std::cout << "done" << std::endl;
-            std::cout << "primitive done" << std::endl;
+            // // std::cout << "done" << std::endl;
+            // std::cout << "primitive done" << std::endl;
+            // currentJsonBlock = decodePrimitiveType(typeDef["primitive"]);
 
-            return currentJsonBlock;
+            return typeDef["primitive"];
         }            
         else if (typeDef.contains("compact")) {
             std::cout << "compact" << std::endl;
@@ -166,6 +198,50 @@ public:
         return currentJsonBlock;
     }
 
+    /*
+    Metadata "def": "array"
+
+    Possible keys:
+    "len" -> array length
+    "type" -> item type
+    */
+    nlohmann::json decodeArrayType(const nlohmann::json& data)
+    {
+        nlohmann::json decodedBlock;
+
+        if (!data.contains("len")) {
+            std::runtime_error("Metadata[decodeArrayType]: Length must be present for the array given\n");
+        }
+        if (!data.contains("type")) {
+            std::runtime_error("Metadata[decodeArrayType]: Type must be present for the array given\n");
+        }
+        uint32_t arrLength = data["len"];
+        nlohmann::json arrType = getFullMetadata(data["type"]);
+
+        std::cout << "Array: " << arrLength << " " << arrType << std::endl;
+
+        //this must be decoded later
+        decodedBlock = "[]";
+
+        return decodedBlock;
+    }
+
+    /*
+    Metadata "def": "primitive"
+    
+    Possible keys: none
+
+    Returns: string with a type
+    */
+    nlohmann::json decodePrimitiveType(const nlohmann::json& data)
+    {
+        // if (!data.contains("primitive")) {
+        //     std::runtime_error("A \"primitive\" key must be present for primitive types\n");
+        // }
+
+        return data["primitive"];
+    }
+
     void printDecodedResult() {
         std::cout << "----------------" << std::endl << mDecodedRes << std::endl;
     }
@@ -176,6 +252,7 @@ private:
     std::unique_ptr<Decoder> mDecoder;
     uint32_t mDataElementsNum = 0;
     uint32_t mCurrentIdx = 0;
+    uint32_t tempKeyIdx = 0;
 };
 
 #endif
