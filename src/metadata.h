@@ -78,8 +78,10 @@ public:
             // std::cout << "composite" << std::endl;
             // currentJsonBlock["name"] = "composite";
 
+#if 0
+
             nlohmann::json& typeFields = typeDef["composite"]["fields"];
-            std::cout << "----start composite of sixe " << typeFields.size() << std::endl;
+            std::cout << "----start composite of size " << typeFields.size() << std::endl;
             for (size_t i = 0; i < typeFields.size(); i++) {
                 // std::cout << typeFields[i]["name"] << std::endl;
                 uint32_t typeIdx = typeFields[i]["type"];
@@ -122,6 +124,9 @@ public:
             }
             std::cout << "composite done" << std::endl;
 
+            return currentJsonBlock;
+#endif
+            currentJsonBlock = decodeCompositeType(typeDef["composite"]);
             return currentJsonBlock;
         }
         else if (typeDef.contains("variant")) {
@@ -167,13 +172,13 @@ public:
             return typeDef["primitive"];
         }            
         else if (typeDef.contains("compact")) {
-            std::cout << "compact" << std::endl;
+            // std::cout << "compact" << std::endl;
 
-            uint32_t compactNum = 233233;
-            currentJsonBlock["def"] = compactNum;
+            // uint32_t compactNum = 233233;
+            // currentJsonBlock["def"] = compactNum;
 
             // currentJsonBlock["name"] = "compact";
-            std::cout << "compact done" << std::endl;
+            // std::cout << "compact done" << std::endl;
             
             return currentJsonBlock;
         }
@@ -196,6 +201,73 @@ public:
         }
 
         return currentJsonBlock;
+    }
+
+    nlohmann::json decodeCompositeType(nlohmann::json) {
+        
+    }
+
+    /*
+    Metadata "def": "composite"
+
+    A collection of several different types
+
+    Contains:
+    "composite": {
+        "fields": [] -> an array of blocks
+    }
+
+    "fields" block type (always):
+    {
+        "name": string or null,
+        "type": this block's type, number
+        "typeName": string or null,
+        "docs": usually []
+    }
+
+    */
+    nlohmann::json decodeCompositeType(const nlohmann::json& data)
+    {
+        nlohmann::json decodedBlock;
+
+        if (!data.contains("fields")) {
+            std::runtime_error("Fields key must be present for composite types\n");
+        }
+
+        const nlohmann::json& typeFields = data["fields"];
+        const uint32_t fieldsSize = typeFields.size();
+
+        if (fieldsSize <= 1) {
+            auto field = typeFields[0];
+            
+            if (!field.contains("type")) {
+                std::runtime_error("Type must be present for a composite field\n");
+            }
+
+            if (!field.contains("name") || field["name"].is_null()) {
+                decodedBlock = getFullMetadata(field["type"]);
+            }
+            else {
+                auto fieldName = field["name"];
+                decodedBlock[fieldName] = getFullMetadata(field["type"]);
+            }
+        }
+        else {
+            for (uint32_t i = 0; i < fieldsSize; i++) {
+                auto field = typeFields[i];
+
+                if (!field.contains("name")) {
+                    std::runtime_error("Field name must be present if there are more than 1 field\n");
+                }
+                if (!field.contains("type")) {
+                    std::runtime_error("Field type must be present for any composite field\n");
+                }
+                auto fieldName = field["name"];
+                decodedBlock[fieldName] = getFullMetadata(field["type"]);
+            }
+        }
+
+        return decodedBlock;
     }
 
     /*
