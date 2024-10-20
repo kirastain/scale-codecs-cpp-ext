@@ -100,7 +100,7 @@ public:
                                 std::is_same<int64_t, T>::value >>
     void decode(DataType type, T& res)
     {
-        // printData();
+        printData();
         if (type == DataType::Fixed8 || type == DataType::Fixed16 || type == DataType::Fixed32) {
             T temp = 0;
             size_t len = sizeof(T);

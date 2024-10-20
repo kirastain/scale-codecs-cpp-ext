@@ -39,8 +39,14 @@ public:
             std::runtime_error("Cannot find types\n");
         }
 
+        std::cout << "input: " << inputBytes << std::endl;
         mDecoder = std::make_unique<Decoder>(inputBytes);
-        mDecoder->decode(DataType::Compact, mDataElementsNum);
+        std::cout << "initialized\n";
+        // mDecoder->decode(DataType::Compact, mDataElementsNum);
+    }
+
+    ~MetadataParser() {
+        std::cout << "parser destroyed" << std::endl;
     }
 
     //get composite fields as a separate
@@ -169,7 +175,8 @@ public:
             // std::cout << "primitive done" << std::endl;
             // currentJsonBlock = decodePrimitiveType(typeDef["primitive"]);
 
-            return typeDef["primitive"];
+            currentJsonBlock = decodePrimitiveType(typeDef["primitive"]);
+            return currentJsonBlock;
         }            
         else if (typeDef.contains("compact")) {
             // std::cout << "compact" << std::endl;
@@ -203,8 +210,24 @@ public:
         return currentJsonBlock;
     }
 
-    nlohmann::json decodeCompositeType(nlohmann::json) {
-        
+    nlohmann::json decodeCompactType(const nlohmann::json& data) {
+        nlohmann::json decodedBlock;
+
+        if (!data.contains("type")) {
+            std::runtime_error("Type must be present for the compact type\n");
+        }
+
+        auto compactType = getFullMetadata(data["type"]);
+
+        if (compactType == META_TYPE_U64) {
+            uint64_t value = 0;
+            if (mDecoder) {
+                mDecoder->decode(DataType::Compact, value);
+            }
+            decodedBlock = value;
+        }
+
+        return decodedBlock;
     }
 
     /*
@@ -307,11 +330,34 @@ public:
     */
     nlohmann::json decodePrimitiveType(const nlohmann::json& data)
     {
-        // if (!data.contains("primitive")) {
-        //     std::runtime_error("A \"primitive\" key must be present for primitive types\n");
-        // }
+        nlohmann::json decodedBlock;
+            std::cout << "primitive uint16\n";
 
-        return data["primitive"];
+
+        if (data == META_TYPE_U8) {
+            uint8_t value = 0;
+            if (mDecoder) {
+                mDecoder->decode(DataType::Fixed8, value);
+            }
+            decodedBlock = value;
+        }
+        else if (data == META_TYPE_U16) {
+            uint16_t value = 0;
+            std::cout << "uint16\n";
+            if (mDecoder) {
+                mDecoder->decode(DataType::Fixed16, value);
+            }
+            std::cout << "value: " << value << std::endl;
+            decodedBlock = value;
+        }
+        else if (data == META_TYPE_U32) {
+            uint32_t value = 0;
+            if (mDecoder) {
+                mDecoder->decode(DataType::Fixed32, value);
+            }
+            decodedBlock = value;
+        }
+        return decodedBlock;
     }
 
     void printDecodedResult() {

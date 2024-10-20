@@ -5,6 +5,34 @@
 
 #include <fstream>
 
+TEST(Meta, Simple_PrimitiveTypes)
+{
+    std::vector<std::string> rawDatas = {"01", "02", "FF"};
+    std::vector<uint32_t> typeIds = { 2, 4, 153 };
+    const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
+
+    for (uint32_t i = 0; i < typeIds.size(); i++) {
+        std::cout << "start test\n";
+        MetadataParser p(metaPath, rawDatas[i]);
+        auto res = p.getFullMetadata(typeIds[i]);
+        std::cout << res << std::endl;
+        std:: cout << "finish\n";
+    }
+}
+
+TEST(Meta, Simple_CompactTypes)
+{
+    std::vector<std::string> rawDatas = {"01", "02", "03"};
+    std::vector<uint32_t> typeIds = { 10, 10, 10 };
+    const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
+
+    for (uint32_t i = 0; i < typeIds.size(); i++) {
+        MetadataParser p(metaPath, rawDatas[i]);
+        auto res = p.getFullMetadata(typeIds[i]);
+        std::cout << res << std::endl;
+    }
+}
+
 TEST(Meta, Simple_ArrayTypes)
 {
     std::string rawData = "080000000000000082c9b343551702000000010000000000c244223d00020100";
@@ -19,7 +47,7 @@ TEST(Meta, Simple_ArrayTypes)
     }
 }
 
-TEST(Meta, Simple_Composite)
+TEST(Meta, Simple_CompositeTypes)
 {
     std::string rawData = "080000000000000082c9b343551702000000010000000000c244223d00020100";
     const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
