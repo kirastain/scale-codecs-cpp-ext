@@ -39,14 +39,15 @@ public:
             std::runtime_error("Cannot find types\n");
         }
 
-        std::cout << "input: " << inputBytes << std::endl;
+        f.close();
+
         mDecoder = std::make_unique<Decoder>(inputBytes);
-        std::cout << "initialized\n";
+        // std::cout << "initialized\n";
         // mDecoder->decode(DataType::Compact, mDataElementsNum);
     }
 
     ~MetadataParser() {
-        std::cout << "parser destroyed" << std::endl;
+        // std::cout << "parser destroyed" << std::endl;
     }
 
     //get composite fields as a separate
@@ -54,15 +55,15 @@ public:
     //recursion end is the primitice type
     //metadata should call on decoder
 
-    std::string getValueKeyName(std::string valueName) {
-        if (valueName == "ApplyExtrinsic") {
-            return "extrinsic_idx";
-        }
-        else {
+    std::string autoGenerateName() {
+        // if (valueName == "ApplyExtrinsic") {
+        //     return "extrinsic_idx";
+        // }
+        // else {
             std::string tempKey = "temp_key_" + std::to_string(tempKeyIdx);
             tempKeyIdx++;
             return tempKey;
-        }
+        // }
     }
 
     nlohmann::json getTypeMetadata(uint32_t idx) {
@@ -73,7 +74,7 @@ public:
         return mTypes[idx];
     }
 
-    nlohmann::json getFullMetadata(uint32_t idx) {
+    nlohmann::json getFullMetadata(uint32_t idx, bool decodeValueFromData = true) {
         nlohmann::json baseType = getTypeMetadata(idx);
 
         nlohmann::json currentJsonBlock;
@@ -138,6 +139,7 @@ public:
         else if (typeDef.contains("variant")) {
             // std::cout << "variant" << std::endl;
             // currentJsonBlock["name"] = "variant";
+#if 0
             uint32_t variantIdx = 0;
             // mDecoder->decode(DataType::Compact, variantIdx);
             // printf("decoded idx for the variant: %d\n", variantIdx);
@@ -152,6 +154,9 @@ public:
                 std::cout << "variant written" << std::endl;
             }
                 return currentJsonBlock;
+#endif
+            currentJsonBlock = decodeVariantType(typeDef["variant"]);
+            return currentJsonBlock;
 
         }
         else if (typeDef.contains("array")) {
@@ -175,7 +180,7 @@ public:
             // std::cout << "primitive done" << std::endl;
             // currentJsonBlock = decodePrimitiveType(typeDef["primitive"]);
 
-            currentJsonBlock = decodePrimitiveType(typeDef["primitive"]);
+            currentJsonBlock = decodePrimitiveType(typeDef["primitive"], decodeValueFromData);
             return currentJsonBlock;
         }            
         else if (typeDef.contains("compact")) {
@@ -186,6 +191,8 @@ public:
 
             // currentJsonBlock["name"] = "compact";
             // std::cout << "compact done" << std::endl;
+
+            currentJsonBlock = decodeCompactType(typeDef["compact"]);
             
             return currentJsonBlock;
         }
@@ -193,14 +200,19 @@ public:
             // std::cout << "sequence" << std::endl;
             // currentJsonBlock["name"] = "sequence";
 
-            nlohmann::json& def = typeDef["sequence"];
-            if (!def.empty()) {
-                uint32_t defTypeIdx = def["type"];
-                currentJsonBlock["def"] = getFullMetadata(defTypeIdx);
-            std::cout << "sequence done" << std::endl;
+            // nlohmann::json& def = typeDef["sequence"];
+            // if (!def.empty()) {
+            //     uint32_t defTypeIdx = def["type"];
+            //     currentJsonBlock["def"] = getFullMetadata(defTypeIdx);
+            // std::cout << "sequence done" << std::endl;
 
-                return currentJsonBlock;
-            }
+                
+
+                // return currentJsonBlock;
+            // }
+
+            currentJsonBlock = decodeSequenceType(typeDef["sequence"]);
+            return currentJsonBlock;
 
         }
         else if (typeDef.contains("tuple")) {
@@ -210,6 +222,105 @@ public:
         return currentJsonBlock;
     }
 
+
+    /*
+    Variant type
+
+    Decodes the local index of the variant type and returns only that
+
+    Structure:
+    "variant": {
+        "variants": [
+        {
+            "name": variant name, string,
+            "fields": [ -> works like a composite or null ([])
+                {
+                    "name"; field name, string or null
+                    "type": type id, number,
+                    "typeName": string,
+                    "docs": []
+                }, 
+                ...
+            ],
+            "index": local id, search by this one,
+            "docs": []
+        },
+        ...
+        ]
+    }
+    */
+    nlohmann::json decodeVariantType(const nlohmann::json& data) {
+        nlohmann::json decodedBlock;
+
+        if (!data.contains("variants")) {
+            std::runtime_error("Variants must be present in the variant\n");
+        }
+
+        const nlohmann::json& dataVariants = data["variants"];
+
+        if (!mDecoder || mDecoder->isEmpty()) {
+            std::runtime_error("Data must be present for decoding\n");
+        }
+
+        uint64_t decodedVariantId = 0;
+        mDecoder->decode(DataType::Compact, decodedVariantId);
+
+        nlohmann::json chosenVariant;
+        for (size_t i = 0; i < dataVariants.size(); i++) {
+            const nlohmann::json& dataVariant = dataVariants[i];
+
+            if (!dataVariant.contains("index")) {
+                std::runtime_error("An index must be present for detecting variants");
+            }
+
+            const uint64_t varId = dataVariant["index"];
+            if (varId == decodedVariantId) {
+                chosenVariant = dataVariant;
+                break;
+            }
+        }
+        
+        if (chosenVariant.empty()) {
+            std::runtime_error("Variant is not found, possibly wrong decoded index\n");
+        }
+
+        if (!chosenVariant.contains("name")) {
+            std::runtime_error("Name must be present for a variant\n");
+        }
+
+        // std::cout << "variant name: " << chosenVariant["name"] << std::endl;
+        decodedBlock[chosenVariant["name"]] = decodeCompositeType(chosenVariant);
+        // std::cout << "variant finished: " << decodedBlock << std::endl;
+        return decodedBlock;
+    }
+
+    /*
+    Sequence type
+
+    A sequence of unnamed blocks of the same type
+
+    */
+    nlohmann::json decodeSequenceType(const nlohmann::json& data) {
+        nlohmann::json decodedBlock;
+
+        if (!data.contains("type")) {
+            std::runtime_error("Type must be present for the compact type\n");
+        }
+
+        if (!mDecoder) {
+            std::runtime_error("Decoder must be initialized\n");
+        }
+
+        while (!mDecoder->isEmpty()) {
+            decodedBlock.push_back(getFullMetadata(data["type"]));
+        }
+
+        return decodedBlock;
+    }
+
+    /*
+    Compact types
+    */
     nlohmann::json decodeCompactType(const nlohmann::json& data) {
         nlohmann::json decodedBlock;
 
@@ -217,7 +328,8 @@ public:
             std::runtime_error("Type must be present for the compact type\n");
         }
 
-        auto compactType = getFullMetadata(data["type"]);
+        nlohmann::json compactType = getFullMetadata(data["type"], false);
+        // std::cout << "compact type: " << compactType << std::endl;
 
         if (compactType == META_TYPE_U64) {
             uint64_t value = 0;
@@ -279,13 +391,20 @@ public:
             for (uint32_t i = 0; i < fieldsSize; i++) {
                 auto field = typeFields[i];
 
-                if (!field.contains("name")) {
-                    std::runtime_error("Field name must be present if there are more than 1 field\n");
+                std::string fieldName;
+                if (!field.contains("name") || field["name"].empty()) {
+                    // std::runtime_error("Field name must be present if there are more than 1 field\n");
+                    fieldName = autoGenerateName();
+                }
+                else {
+                    fieldName = field["name"];
                 }
                 if (!field.contains("type")) {
                     std::runtime_error("Field type must be present for any composite field\n");
                 }
-                auto fieldName = field["name"];
+                // auto fieldName = field["name"];
+
+                // std::cout << fieldName   < std::endl;
                 decodedBlock[fieldName] = getFullMetadata(field["type"]);
             }
         }
@@ -311,12 +430,14 @@ public:
             std::runtime_error("Metadata[decodeArrayType]: Type must be present for the array given\n");
         }
         uint32_t arrLength = data["len"];
-        nlohmann::json arrType = getFullMetadata(data["type"]);
+        nlohmann::json arrType = getFullMetadata(data["type"], false);
 
-        std::cout << "Array: " << arrLength << " " << arrType << std::endl;
+        // std::cout << "Array: " << arrLength << " " << arrType << std::endl;
 
         //this must be decoded later
         decodedBlock = "[]";
+
+        // std::cout << "arr done\n";
 
         return decodedBlock;
     }
@@ -328,11 +449,13 @@ public:
 
     Returns: string with a type
     */
-    nlohmann::json decodePrimitiveType(const nlohmann::json& data)
+    nlohmann::json decodePrimitiveType(const nlohmann::json& data, bool decodeValueFromData = true)
     {
         nlohmann::json decodedBlock;
-            std::cout << "primitive uint16\n";
 
+        if (!decodeValueFromData) {
+            return data;
+        }
 
         if (data == META_TYPE_U8) {
             uint8_t value = 0;
@@ -343,11 +466,9 @@ public:
         }
         else if (data == META_TYPE_U16) {
             uint16_t value = 0;
-            std::cout << "uint16\n";
             if (mDecoder) {
                 mDecoder->decode(DataType::Fixed16, value);
             }
-            std::cout << "value: " << value << std::endl;
             decodedBlock = value;
         }
         else if (data == META_TYPE_U32) {

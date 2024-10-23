@@ -7,23 +7,34 @@
 
 TEST(Meta, Simple_PrimitiveTypes)
 {
-    std::vector<std::string> rawDatas = {"01", "02", "FF"};
+    std::vector<std::string> rawDatas = {"01", "00000002", "00FF"};
     std::vector<uint32_t> typeIds = { 2, 4, 153 };
     const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
 
     for (uint32_t i = 0; i < typeIds.size(); i++) {
-        std::cout << "start test\n";
         MetadataParser p(metaPath, rawDatas[i]);
         auto res = p.getFullMetadata(typeIds[i]);
-        std::cout << res << std::endl;
-        std:: cout << "finish\n";
+        // std::cout << res << std::endl;
     }
 }
 
 TEST(Meta, Simple_CompactTypes)
 {
-    std::vector<std::string> rawDatas = {"01", "02", "03"};
+    std::vector<std::string> rawDatas = {"00", "04", "a8"};
     std::vector<uint32_t> typeIds = { 10, 10, 10 };
+    const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
+
+    for (uint32_t i = 0; i < typeIds.size(); i++) {
+        MetadataParser p(metaPath, rawDatas[i]);
+        auto res = p.getFullMetadata(typeIds[i]);
+        // std::cout << res << std::endl;
+    }
+}
+
+TEST(Meta, Simple_SequenceTypes)
+{
+    std::vector<std::string> rawDatas = { "000102030405" };
+    std::vector<uint32_t> typeIds = { 13 };
     const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
 
     for (uint32_t i = 0; i < typeIds.size(); i++) {
@@ -61,7 +72,20 @@ TEST(Meta, Simple_CompositeTypes)
     }
 }
 
-TEST(Meta, Simple)
+TEST(Meta, Simple_VariantTypes)
+{
+    std::vector<std::string> rawDatas = { "18050607" };
+    std::vector<uint32_t> typeIds = { 16 };
+    const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
+
+    for (uint32_t i = 0; i < typeIds.size(); i++) {
+        MetadataParser p(metaPath, rawDatas[i]);
+        auto res = p.getFullMetadata(typeIds[i]);
+        std::cout << res << std::endl;
+    }
+}
+
+TEST(Meta, Type18)
 {
     std::string rawData = "080000000000000082c9b343551702000000010000000000c244223d00020100";
     MetadataParser p("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json", rawData);
