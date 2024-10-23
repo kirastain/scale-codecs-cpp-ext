@@ -33,7 +33,7 @@ TEST(Meta, Simple_CompactTypes)
 
 TEST(Meta, Simple_SequenceTypes)
 {
-    std::vector<std::string> rawDatas = { "000102030405" };
+    std::vector<std::string> rawDatas = { "18000102030405" };
     std::vector<uint32_t> typeIds = { 13 };
     const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
 
@@ -74,7 +74,7 @@ TEST(Meta, Simple_CompositeTypes)
 
 TEST(Meta, Simple_VariantTypes)
 {
-    std::vector<std::string> rawDatas = { "18050607" };
+    std::vector<std::string> rawDatas = { "180c050607" };
     std::vector<uint32_t> typeIds = { 16 };
     const std::string metaPath = "/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json";
 
@@ -91,6 +91,8 @@ TEST(Meta, Type18)
     MetadataParser p("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/json/metadata.json", rawData);
     
     auto type = p.getFullMetadata(18);
+
+    std::cout << "check: " << type << std::endl;
 
     std::ofstream outFile("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/decoded_cpp.json");
     outFile << type;
