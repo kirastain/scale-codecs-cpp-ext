@@ -79,9 +79,7 @@ public:
 
     void decode(DataType type, std::string &res, const uint32_t &len) {
         if (type == DataType::String) {
-printData();
-
-            printf("decoded len is %d\n", len);
+            // printf("decoded len is %d\n", len);
             for (size_t i = 0; i < len; i++) {
                 res += mData[i];    
             }
@@ -92,8 +90,6 @@ printData();
 
     void decode(DataType type, bool& res) {
         if (type == DataType::Boolean) {
-printData();
-
             res = mData[0] == 0 ? false : true;
             mData.erase(mData.begin());
         }
@@ -112,8 +108,6 @@ printData();
     {
         // printData();
         if (type == DataType::Fixed8 || type == DataType::Fixed16 || type == DataType::Fixed32) {
-printData();
-
             T temp = 0;
             size_t len = sizeof(T);
 
@@ -124,8 +118,6 @@ printData();
             mData.erase(mData.begin(), mData.begin() + len);
         }
         else if (type == DataType::Compact) {
-printData();
-
             uint8_t mode = mData[0] & 0b11;
             if (mode == 0) {
                 res = (static_cast<uint32_t>(mData[0]) >> 2);
@@ -162,11 +154,7 @@ printData();
     void decode(DataType type, uint64_t& res)
     {
         if (type == DataType::Compact) {
-printData();
-
             uint8_t mode = mData[0] & 0b11;
-            printf("[DEBUG]: %d\n", mode);
-
             if (mode == 0) {
                 res = (static_cast<uint32_t>(mData[0]) >> 2);
                 mData.erase(mData.begin());
@@ -199,8 +187,6 @@ printData();
     void decode(DataType type, DataType typeValue, std::pair<bool, T>& res)
     {
         if (type == DataType::Result) {
-printData();
-
             bool resBool;
             decode(DataType::Boolean, resBool);
             // printData();
@@ -216,8 +202,6 @@ printData();
     {
         if (typeContainer == DataType::Container)
         {
-printData();
-
             uint64_t containerSize;
             decode(DataType::Compact, containerSize);
             // printf("Vec size: %lu\n", containerSize);

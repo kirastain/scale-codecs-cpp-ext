@@ -44,16 +44,17 @@ public:
         mDecoder = std::make_unique<Decoder>(inputBytes);
         // std::cout << "initialized\n";
         // mDecoder->decode(DataType::Compact, mDataElementsNum);
+
+        mLog = std::ofstream("log");
+        if (!mLog.is_open()) {
+            std::runtime_error("Cannon open log file\n");
+        }
     }
 
     ~MetadataParser() {
         // std::cout << "parser destroyed" << std::endl;
+        mLog.close();
     }
-
-    //get composite fields as a separate
-    //get variant as a separate
-    //recursion end is the primitice type
-    //metadata should call on decoder
 
     std::string autoGenerateName() {
         // if (valueName == "ApplyExtrinsic") {
@@ -66,67 +67,66 @@ public:
         // }
     }
 
-    nlohmann::json getTypeMetadata(uint32_t idx) {
+    nlohmann::json getBaseMetadata(uint32_t idx) {
         if (mTypes[idx].is_null()) {
-            std::cout << "MetadataParser: type idx not found" << std::endl;
+            mLog << "MetadataParse[getTypeMetadata]: type idx not found" << std::endl;
             return nlohmann::json();
         }
         return mTypes[idx];
     }
 
     nlohmann::json getFullMetadata(uint32_t idx, bool decodeValueFromData = true) {
-        nlohmann::json baseType = getTypeMetadata(idx);
+        nlohmann::json baseType = getBaseMetadata(idx);
 
         nlohmann::json currentJsonBlock;
 
         nlohmann::json& typeDef = baseType["type"]["def"];
 
         if (typeDef.contains("composite")) {
-            std::cout << "composite" << std::endl;
+            mLog << "MetadataParser[getFullMetadata]: type[" << idx << "]: composite" << std::endl;
 
             currentJsonBlock = decodeCompositeType(typeDef["composite"]);
             return currentJsonBlock;
         }
         else if (typeDef.contains("variant")) {
-            std::cout << "variant of type " << idx << std::endl;
+            mLog << "MetadataParser[getFullMetadata]: type[" << idx << "]: variant" << std::endl;
             
             currentJsonBlock = decodeVariantType(typeDef["variant"]);
             return currentJsonBlock;
 
         }
         else if (typeDef.contains("array")) {
-            std::cout << "array" << std::endl;
+            mLog << "MetadataParser[getFullMetadata]: type[" << idx << "]: array" << std::endl;
             
             currentJsonBlock = decodeArrayType(typeDef["array"]);
 
             return currentJsonBlock;
         }
         else if (typeDef.contains("primitive")) {
-            std::cout << "primitive" << std::endl;
+            mLog << "MetadataParser[getFullMetadata]: type[" << idx << "]: primitive" << std::endl;
 
             currentJsonBlock = decodePrimitiveType(typeDef["primitive"], decodeValueFromData);
             return currentJsonBlock;
         }            
         else if (typeDef.contains("compact")) {
-            std::cout << "compact" << std::endl;
+            mLog << "MetadataParser[getFullMetadata]: type[" << idx << "]: compact" << std::endl;
 
             currentJsonBlock = decodeCompactType(typeDef["compact"]);
             
             return currentJsonBlock;
         }
         else if (typeDef.contains("sequence")) {
-            std::cout << "sequence" << std::endl;
-            
+            mLog << "MetadataParser[getFullMetadata]: type[" << idx << "]: sequence" << std::endl;
 
             currentJsonBlock = decodeSequenceType(typeDef["sequence"]);
             return currentJsonBlock;
 
         }
         else if (typeDef.contains("tuple")) {
-            std::cout << "tuple" << std::endl;
+            mLog << "MetadataParser[getFullMetadata]: type[" << idx << "]: tuple" << std::endl;
         }
 
-        std::cout << "CHECK in main: " << currentJsonBlock << std::endl;
+        mLog << "MetadataParser[getFullMetadata]: CHECK[" << currentJsonBlock << std::endl;
         return currentJsonBlock;
     }
 
@@ -172,7 +172,7 @@ public:
 
         uint8_t decodedVariantId = 0;
         mDecoder->decode(DataType::Fixed8, decodedVariantId);
-        printf("CHECK: variant decoded from metadata is: %d\n", decodedVariantId);
+        // printf("CHECK: variant decoded from metadata is: %d\n", decodedVariantId);
 
         nlohmann::json chosenVariant;
         for (size_t i = 0; i < dataVariants.size(); i++) {
@@ -183,15 +183,11 @@ public:
             }
 
             const uint64_t varId = i;
-
-            std::cout << "CHECK compare var ids: " << varId << " " << decodedVariantId << std::endl;
             if (varId == decodedVariantId) {
                 chosenVariant = dataVariant;
                 break;
             }
         }
-
-        std::cout << "CHECK: " << chosenVariant << std::endl;
         
         if (chosenVariant.empty()) {
             std::runtime_error("Variant is not found, possibly wrong decoded index\n");
@@ -208,7 +204,6 @@ public:
         else {
             decodedBlock = chosenVariant["name"];
         }
-        // std::cout << "variant finished: " << decodedBlock << std::endl;
         return decodedBlock;
     }
 
@@ -232,10 +227,9 @@ public:
         uint64_t sequenceSize = 0;
         mDecoder->decode(DataType::Compact, sequenceSize);
 
-        printf("sequence size is %d\n", sequenceSize);
+        mLog << "MetadataParser[decodeSequenceType]: sequence size is: " << sequenceSize << std::endl;
 
         for (size_t i = 0; i < sequenceSize; i++) {
-            printf("[Debug]: sequence number %d\n", i);
             decodedBlock.push_back(getFullMetadata(data["type"]));
         }
 
@@ -253,14 +247,13 @@ public:
         }
 
         nlohmann::json compactType = getFullMetadata(data["type"], false);
-        // std::cout << "compact type: " << compactType << std::endl;
 
         if (compactType == META_TYPE_U64) {
             uint64_t value = 0;
             if (mDecoder) {
                 mDecoder->decode(DataType::Compact, value);
             }
-            std::cout << "[DEBUG]: decoded compact value is: " << value << std::endl;
+
             decodedBlock = value;
         }
 
@@ -388,8 +381,6 @@ public:
                 mDecoder->decode(DataType::Fixed8, value);
             }
             decodedBlock = value;
-        std::cout << "CHECK primitive: " << value << std::endl;
-
         }
         else if (data == META_TYPE_U16) {
             uint16_t value = 0;
@@ -397,8 +388,6 @@ public:
                 mDecoder->decode(DataType::Fixed16, value);
             }
             decodedBlock = value;
-        std::cout << "CHECK primitive: " << value << std::endl;
-
         }
         else if (data == META_TYPE_U32) {
             uint32_t value = 0;
@@ -406,16 +395,18 @@ public:
                 mDecoder->decode(DataType::Fixed32, value);
             }
             decodedBlock = value;
-        std::cout << "CHECK primitive: " << value << std::endl;
-
         }
 
-        // std::cout << "CHECK primitive: " << value << std::endl;
         return decodedBlock;
     }
 
-    void printDecodedResult() {
-        std::cout << "----------------" << std::endl << mDecodedRes << std::endl;
+    // void printDecodedResult() {
+    //     std::cout << "----------------" << std::endl << mDecodedRes << std::endl;
+    // }
+
+    void log(std::string s)
+    {
+        mLog << s << std::endl;
     }
 
 private:
@@ -425,6 +416,7 @@ private:
     uint32_t mDataElementsNum = 0;
     uint32_t mCurrentIdx = 0;
     uint32_t tempKeyIdx = 0;
+    std::ofstream mLog;
 };
 
 #endif

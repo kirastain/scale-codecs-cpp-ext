@@ -55,7 +55,7 @@ std::deque<uint8_t> CompactIntegerEncoder::encodeOneByte(const int64_t& value)
 std::deque<uint8_t> CompactIntegerEncoder::encodeTwoByte(const int64_t& value)
 {
     uint16_t v = static_cast<uint16_t>(value);
-    std::cout << "check v: " << std::bitset<16>(v) << std::endl;
+    // std::cout << "check v: " << std::bitset<16>(v) << std::endl;
     uint16_t vShift = v << 2;
     // std::cout << "check v: " << std::bitset<16>(vShift) << std::endl;
     uint16_t vShiftAdd = vShift | 1;
