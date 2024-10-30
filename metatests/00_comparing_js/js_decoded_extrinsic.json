@@ -1,0 +1,30 @@
+{
+    "isSigned": true,
+    "method": {
+      "args": {
+        "subscription_id": "4CP3rYLX8jvnWGvYscKoSu1icgdAo5LCAyaQdhLSvFs9y7wB",
+        "call": {
+          "args": {
+            "record": "{'type': 'KEEP_ALIVE', 'state': 'COMPLETE', 'power': {'activeW': 806, 'activeDeltaW': 0, 'reactiveVar': -118, 'reactiveDeltaVar': -4, 'apparentVa': 821}, 'currentA': 3.691, 'voltageV': 222.52, 'phaseDeg': -8.0, 'energyConsumptionWh': 2369176, 'energyConsumptionDeltaWh': 14, 'timestamp': '2022-07-18T22:27:44Z', 'eventId': 562999, 'protocolVersion': 2, 'activePowerProd': 806, 'energyProd': 2368976, 'energyProdDelta': 13, 'activePowerCons': 0, 'energyCons': 199, 'energyConsDelta': 0}"
+          },
+          "method": "record",
+          "section": "datalog"
+        }
+      },
+      "method": "call",
+      "section": "rws"
+    },
+    "assetId": null,
+    "era": {
+      "ImmortalEra": "0x00"
+    },
+    "metadataHash": null,
+    "mode": null,
+    "nonce": "441,723",
+    "signature": "0x4cc9fd4eb0012392fdeace1f95c78fc6eb4d86425946534fa53692366e47bf384a7899e2dcd99a44413b7411ea156c259444785ae4275f0408c5ed012fa1738c",
+    "signer": {
+      "Id": "4FHEFyQGaXfVuhvp5Y6MJem6d7Kf8u6MHfsVM8ZfuAMEw2AN"
+    },
+    "tip": "0"
+  }
+  

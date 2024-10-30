@@ -7,4 +7,6 @@
 #include "src/encoder.hpp"
 #include "src/decoder.hpp"
 
+// bool GDEBUG = false;
+
 #endif

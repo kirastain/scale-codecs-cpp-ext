@@ -167,16 +167,26 @@ public:
     // -------------------- Structs ------------------
     void encode(ScaleArray& arr)
     {
-        auto it = arr.begin();
-
-        while (it != arr.end()) {
-            Node elem = it->second;
-            if (it->second._type == DataType::Fixed8) {
+        for (size_t i = 0; i < arr._names.size(); i++) {
+            Node &elem = arr.elems[arr._names[i]];
+            if (elem._type == DataType::Fixed8) {
                 uint8_t value = arr.convertToOriginalType(elem);
                 encode<uint8_t>(elem._type, value);
             }
+            else if (elem._type == DataType::Fixed16) {
+                uint16_t value = arr.convertToOriginalType(elem);
+                encode<uint16_t>(elem._type, value);
+            }
+            else if (elem._type == DataType::Fixed32) {
+                uint32_t value = arr.convertToOriginalType(elem);
+                encode<uint32_t>(elem._type, value);
+            }
+            else if (elem._type == DataType::Compact) {
+                uint64_t value = arr.convertToOriginalType(elem);
+                encode(elem._type, value);
+            }
             // std::cout << "encoded" << std::endl;
-            it++;
+            // printData();
         }
     }
 

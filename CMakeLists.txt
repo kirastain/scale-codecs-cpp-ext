@@ -54,8 +54,10 @@ target_include_directories(scale-codecs-lib
 enable_testing()
 
 add_executable(test_lib)
-target_sources(test_lib PRIVATE simple_tests.cpp node_tests.cpp)
+target_sources(test_lib PRIVATE run_tests.cpp simple_tests.cpp node_tests.cpp metadata_tests.cpp)
 target_link_libraries(test_lib scale-codecs-lib GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(test_lib)
+
+file(COPY json/metadata.json DESTINATION ${CMAKE_BINARY_DIR})

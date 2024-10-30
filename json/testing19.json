@@ -1,0 +1,423 @@
+{
+    "id": 19,
+    "type": {
+        "def": {
+            "composite": {
+                "fields": [
+                    {
+                        "id": 133,
+                        "type": {
+                            "def": {
+                                "variant": {
+                                    "variants": [
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 4,
+                                                    "typeName": "u32"
+                                                }
+                                            ],
+                                            "index": 0,
+                                            "name": "ApplyExtrinsic"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [],
+                                            "index": 1,
+                                            "name": "Finalization"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [],
+                                            "index": 2,
+                                            "name": "Initialization"
+                                        }
+                                    ]
+                                }
+                            },
+                            "docs": [],
+                            "params": [],
+                            "path": [
+                                "frame_system",
+                                "Phase"
+                            ]
+                        }
+                    },
+                    {
+                        "id": 20,
+                        "type": {
+                            "def": {
+                                "variant": {
+                                    "variants": [
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 21,
+                                                    "typeName": "frame_system::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 10,
+                                            "name": "System"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 30,
+                                                    "typeName": "pallet_utility::Event"
+                                                }
+                                            ],
+                                            "index": 11,
+                                            "name": "Utility"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 33,
+                                                    "typeName": "pallet_identity::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 13,
+                                            "name": "Identity"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 34,
+                                                    "typeName": "pallet_multisig::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 15,
+                                            "name": "Multisig"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 36,
+                                                    "typeName": "cumulus_pallet_parachain_system::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 21,
+                                            "name": "ParachainSystem"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 38,
+                                                    "typeName": "pallet_balances::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 31,
+                                            "name": "Balances"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 40,
+                                                    "typeName": "pallet_transaction_payment::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 32,
+                                            "name": "TransactionPayment"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 41,
+                                                    "typeName": "pallet_vesting::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 33,
+                                            "name": "Vesting"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 42,
+                                                    "typeName": "pallet_assets::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 34,
+                                            "name": "Assets"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 44,
+                                                    "typeName": "pallet_treasury::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 40,
+                                            "name": "Treasury"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 45,
+                                                    "typeName": "pallet_scheduler::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 41,
+                                            "name": "Scheduler"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 47,
+                                                    "typeName": "pallet_collective::Event<Runtime, pallet_collective::Instance2>"
+                                                }
+                                            ],
+                                            "index": 42,
+                                            "name": "TechnicalCommittee"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 48,
+                                                    "typeName": "pallet_membership::Event<Runtime, pallet_membership::Instance1>"
+                                                }
+                                            ],
+                                            "index": 43,
+                                            "name": "TechnicalMembership"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 49,
+                                                    "typeName": "pallet_democracy::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 44,
+                                            "name": "Democracy"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 54,
+                                                    "typeName": "pallet_preimage::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 45,
+                                            "name": "Preimage"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 55,
+                                                    "typeName": "pallet_robonomics_datalog::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 51,
+                                            "name": "Datalog"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 57,
+                                                    "typeName": "pallet_robonomics_launch::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 52,
+                                            "name": "Launch"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 58,
+                                                    "typeName": "pallet_robonomics_digital_twin::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 54,
+                                            "name": "DigitalTwin"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 59,
+                                                    "typeName": "pallet_robonomics_rws::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 55,
+                                            "name": "RWS"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 63,
+                                                    "typeName": "pallet_robonomics_liability::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 56,
+                                            "name": "Liability"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 74,
+                                                    "typeName": "pallet_robonomics_lighthouse::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 60,
+                                            "name": "Lighthouse"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 75,
+                                                    "typeName": "cumulus_pallet_xcmp_queue::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 70,
+                                            "name": "XcmpQueue"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 78,
+                                                    "typeName": "pallet_xcm::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 71,
+                                            "name": "PolkadotXcm"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 131,
+                                                    "typeName": "cumulus_pallet_xcm::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 72,
+                                            "name": "CumulusXcm"
+                                        },
+                                        {
+                                            "docs": [],
+                                            "fields": [
+                                                {
+                                                    "docs": [],
+                                                    "name": null,
+                                                    "type": 132,
+                                                    "typeName": "cumulus_pallet_dmp_queue::Event<Runtime>"
+                                                }
+                                            ],
+                                            "index": 73,
+                                            "name": "DmpQueue"
+                                        }
+                                    ]
+                                }
+                            },
+                            "docs": [],
+                            "params": [],
+                            "path": [
+                                "main_runtime",
+                                "RuntimeEvent"
+                            ]
+                        }
+                    },
+                    {
+                        "id": 134,
+                        "type": {
+                            "def": {
+                                "sequence": {
+                                    "type": 12
+                                }
+                            },
+                            "docs": [],
+                            "params": [],
+                            "path": []
+                        }
+                    }
+                ]
+            }
+        },
+        "docs": [],
+        "params": [
+            {
+                "name": "E",
+                "type": 20
+            },
+            {
+                "name": "T",
+                "type": 12
+            }
+        ],
+        "path": [
+            "frame_system",
+            "EventRecord"
+        ]
+    }
+}

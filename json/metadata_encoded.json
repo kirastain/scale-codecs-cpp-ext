@@ -1,0 +1,44 @@
+{
+    "id": 19,
+    "type": {
+        "def": {
+            "composite": {
+                "fields": [
+                    {
+                        "docs": [],
+                        "name": "phase",
+                        "type": 133,
+                        "typeName": "Phase"
+                    },
+                    {
+                        "docs": [],
+                        "name": "event",
+                        "type": 20,
+                        "typeName": "E"
+                    },
+                    {
+                        "docs": [],
+                        "name": "topics",
+                        "type": 134,
+                        "typeName": "Vec<T>"
+                    }
+                ]
+            }
+        },
+        "docs": [],
+        "params": [
+            {
+                "name": "E",
+                "type": 20
+            },
+            {
+                "name": "T",
+                "type": 12
+            }
+        ],
+        "path": [
+            "frame_system",
+            "EventRecord"
+        ]
+    }
+}

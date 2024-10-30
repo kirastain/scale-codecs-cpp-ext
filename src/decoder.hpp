@@ -26,6 +26,7 @@ public:
     Decoder& operator=(const Decoder& other) = default;
     ~Decoder()
     {
+        // std::cout << "decoder destroyed" << std::endl;
     }
 
     void printData()
@@ -35,6 +36,11 @@ public:
             printf("%02x", mData[i]);
         }
         printf("]\n");
+    }
+
+    bool isEmpty()
+    {
+        return mData.empty();
     }
 
     void readLengths(std::string input)
@@ -73,6 +79,7 @@ public:
 
     void decode(DataType type, std::string &res, const uint32_t &len) {
         if (type == DataType::String) {
+            // printf("decoded len is %d\n", len);
             for (size_t i = 0; i < len; i++) {
                 res += mData[i];    
             }
@@ -99,6 +106,7 @@ public:
                                 std::is_same<int64_t, T>::value >>
     void decode(DataType type, T& res)
     {
+        // printData();
         if (type == DataType::Fixed8 || type == DataType::Fixed16 || type == DataType::Fixed32) {
             T temp = 0;
             size_t len = sizeof(T);

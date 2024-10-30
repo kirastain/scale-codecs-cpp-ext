@@ -15,14 +15,20 @@
 // #include "../include/yato/any.h"
 #include "../include/any.h"
 
-#define TYPEINFO_FIXED8 "unsigned char"
-#define TYPEINFO_FIXED16 "u_16"
+#define TYPEINFO_FIXED8 "u8"
+#define TYPEINFO_FIXED16 "u16"
+#define TYPEINFO_FIXED32 "u32"
+#define TYPEINFO_COMPACT "compact"
+#define TYPEINFO_CONTAINER "container"
+
 
 enum class DataType {Fixed8, Fixed16, Fixed32, Fixed64, Result, Compact, Option, Container, Tuple, Struct, 
     Boolean, String, Unknown};
+enum class DataClass { Simple, Collection };
 
 struct Node {
-    DataType _type;
+    DataType _type = DataType::Unknown;
+    DataClass _class = DataClass::Simple;
     libany::any _value;
 };
 // #endif
@@ -59,16 +65,41 @@ class ScaleArray {
 
             // node newNode = std::make_pair(getValueDataType(elem), elemP);
             Node newNode;
-            newNode._type = getValueDataType(elem);
+            if (name == TYPEINFO_COMPACT) {
+                newNode._type = DataType::Compact;
+            }
+            else {
+                newNode._type = getValueDataType(elem);
+            }
             newNode._value = elemP;
 
             // uint8_t check1 = libany::any_cast<uint8_t>(newNode._value);
             // printf("check in insert: %d\n", check1);
 
             elems[name] = newNode;
+            _names.push_back(name);
             // std::cout << "recorded: " << getTypeInfo(elems[name]._type) << std::endl;
             // uint8_t check2 = libany::any_cast<uint8_t>(elems[name]._value);
             // printf("check in insert: %d\n", check2);
+        }
+
+        template <typename T>
+        void insert(std::string name, std::vector<T> elem)
+        {
+            libany::any elemP(elem);
+            
+            Node newNode;
+            if (name == TYPEINFO_COMPACT) {
+                newNode._type = DataType::Compact;
+            }
+            else {
+                newNode._type = getValueDataType(elem);
+            }
+            newNode._value = elemP;
+
+
+            elems[name] = newNode;
+            _names.push_back(name);
         }
 
         RevertedValue convertToOriginalType(Node &node)
@@ -88,15 +119,17 @@ class ScaleArray {
             return elems.end();
         }
 
+        //value
         std::map<std::string, Node> elems;
+        std::vector<std::string> _names;
 
         private:
         template <typename T>
         DataType getValueDataType(T elem)
         {
             // if (std::is_same_v<uint8_t, T>) {
+            
             if (std::is_same<uint8_t, T>::value) {
-
                 return DataType::Fixed8;
             }
             else if (std::is_same<uint16_t, T>::value) {
@@ -114,6 +147,7 @@ class ScaleArray {
             else if (std::is_same<bool, T>::value) {
                 return DataType::Boolean;
             }
+            //TODO:: add vector, options, etc.
             else {
                 return DataType::Unknown;
             }
