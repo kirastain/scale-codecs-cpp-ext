@@ -1,1 +1,42 @@
-{"def":{"def":{"class":"Normal","pays_fee":"Yes"},"event":"System","name":"ExtrinsicSuccess","phase":"ApplyExtrinsic","topics":{"def":"array"}}}
+[
+    {
+        "event": {
+            "System": {
+                "ExtrinsicSuccess": {
+                    "dispatch_info": {
+                        "class": "Mandatory",
+                        "pays_fee": "Yes",
+                        "weight": {
+                            "proof_size": 1493,
+                            "ref_time": 283964000
+                        }
+                    }
+                }
+            }
+        },
+        "phase": {
+            "ApplyExtrinsic": 0
+        },
+        "topics": null
+    },
+    {
+        "event": {
+            "System": {
+                "ExtrinsicSuccess": {
+                    "dispatch_info": {
+                        "class": "Mandatory",
+                        "pays_fee": "No",
+                        "weight": {
+                            "proof_size": 0,
+                            "ref_time": 256414000
+                        }
+                    }
+                }
+            }
+        },
+        "phase": {
+            "ApplyExtrinsic": 1
+        },
+        "topics": null
+    }
+]

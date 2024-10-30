@@ -119,6 +119,26 @@ TEST(Meta, Type18)
     // } 
 }
 
+// TEST(Meta, TypeX)
+// {
+//     std::string rawData = "1098";
+//     // MetadataParser p("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/metatests/00_comparing_js/metadata_robonomics.json", rawData);
+    
+//     // auto type = p.getFullMetadata(18);
+
+//     Decoder decoder(rawData);
+//     uint64_t value = 0;
+
+//     decoder.decode(DataType::Compact, value);
+
+//     std::cout << "check: " << value << std::endl;
+
+//     // std::ofstream outFile("/Users/kirastain/Documents/rob/scale-codecs-cpp-ext/decoded_cpp.json");
+//     // outFile << type;
+//     // outFile.close();
+
+// }
+
 TEST(Meta, RawDataAsString)
 {
     std::string rawData = "080000000000000082c9b343551702000000010000000000c244223d00020100";

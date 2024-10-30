@@ -1,0 +1,41 @@
+{
+    "extrinsic_hash": "0xbc2180c1773838ccf2f1e79302bec500c3c5ed7da8ea9471f5e40667574eed9f",
+    "extrinsic_length": 628,
+    "address": "4FHEFyQGaXfVuhvp5Y6MJem6d7Kf8u6MHfsVM8ZfuAMEw2AN",
+    "signature": {
+        "Sr25519": "0x4cc9fd4eb0012392fdeace1f95c78fc6eb4d86425946534fa53692366e47bf384a7899e2dcd99a44413b7411ea156c259444785ae4275f0408c5ed012fa1738c"
+    },
+    "era": "00",
+    "nonce": 441723,
+    "tip": 0,
+    "call": {
+        "call_index": "0x3700",
+        "call_function": "call",
+        "call_module": "RWS",
+        "call_args": [
+            {
+                "name": "subscription_id",
+                "type": "AccountId",
+                "value": "4CP3rYLX8jvnWGvYscKoSu1icgdAo5LCAyaQdhLSvFs9y7wB"
+            },
+            {
+                "name": "call",
+                "type": "Call",
+                "value": {
+                    "call_index": "0x3300",
+                    "call_function": "record",
+                    "call_module": "Datalog",
+                    "call_args": [
+                        {
+                            "name": "record",
+                            "type": "Record",
+                            "value": "{'type': 'KEEP_ALIVE', 'state': 'COMPLETE', 'power': {'activeW': 806, 'activeDeltaW': 0, 'reactiveVar': -118, 'reactiveDeltaVar': -4, 'apparentVa': 821}, 'currentA': 3.691, 'voltageV': 222.52, 'phaseDeg': -8.0, 'energyConsumptionWh': 2369176, 'energyConsumptionDeltaWh': 14, 'timestamp': '2022-07-18T22: 27: 44Z', 'eventId': 562999, 'protocolVersion': 2, 'activePowerProd': 806, 'energyProd': 2368976, 'energyProdDelta': 13, 'activePowerCons': 0, 'energyCons': 199, 'energyConsDelta': 0}"
+                        }
+                    ],
+                    "call_hash": "0x9a2c8cdb7b8bc2920e5c85fd8d8609b0aee1e0458093be4affc536a0c1dd98c8"
+                }
+            }
+        ],
+        "call_hash": "0x1beb1fe433dc264a34ae4fa25b4e28c8750a52f8b794e4619e471f7cdde801f7"
+    }
+}

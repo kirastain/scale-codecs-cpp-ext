@@ -88,7 +88,7 @@ public:
             return currentJsonBlock;
         }
         else if (typeDef.contains("variant")) {
-            std::cout << "variant" << std::endl;
+            std::cout << "variant of type " << idx << std::endl;
             
             currentJsonBlock = decodeVariantType(typeDef["variant"]);
             return currentJsonBlock;
@@ -170,9 +170,9 @@ public:
             std::runtime_error("Data must be present for decoding\n");
         }
 
-        uint64_t decodedVariantId = 0;
-        mDecoder->decode(DataType::Compact, decodedVariantId);
-        std::cout << "CHECK: variant decoded id: " << decodedVariantId << std::endl;
+        uint8_t decodedVariantId = 0;
+        mDecoder->decode(DataType::Fixed8, decodedVariantId);
+        printf("CHECK: variant decoded from metadata is: %d\n", decodedVariantId);
 
         nlohmann::json chosenVariant;
         for (size_t i = 0; i < dataVariants.size(); i++) {
@@ -182,7 +182,7 @@ public:
                 std::runtime_error("An index must be present for detecting variants");
             }
 
-            const uint64_t varId = dataVariant["index"];
+            const uint64_t varId = i;
 
             std::cout << "CHECK compare var ids: " << varId << " " << decodedVariantId << std::endl;
             if (varId == decodedVariantId) {
@@ -202,7 +202,12 @@ public:
         }
 
         // std::cout << "variant name: " << chosenVariant["name"] << std::endl;
-        decodedBlock[chosenVariant["name"]] = decodeCompositeType(chosenVariant);
+        if (chosenVariant.contains("fields") && !chosenVariant["fields"].empty()) {
+            decodedBlock[chosenVariant["name"]] = decodeCompositeType(chosenVariant);
+        }
+        else {
+            decodedBlock = chosenVariant["name"];
+        }
         // std::cout << "variant finished: " << decodedBlock << std::endl;
         return decodedBlock;
     }
@@ -227,9 +232,11 @@ public:
         uint64_t sequenceSize = 0;
         mDecoder->decode(DataType::Compact, sequenceSize);
 
+        printf("sequence size is %d\n", sequenceSize);
+
         for (size_t i = 0; i < sequenceSize; i++) {
+            printf("[Debug]: sequence number %d\n", i);
             decodedBlock.push_back(getFullMetadata(data["type"]));
-            i++;
         }
 
         return decodedBlock;
@@ -253,6 +260,7 @@ public:
             if (mDecoder) {
                 mDecoder->decode(DataType::Compact, value);
             }
+            std::cout << "[DEBUG]: decoded compact value is: " << value << std::endl;
             decodedBlock = value;
         }
 
@@ -380,6 +388,8 @@ public:
                 mDecoder->decode(DataType::Fixed8, value);
             }
             decodedBlock = value;
+        std::cout << "CHECK primitive: " << value << std::endl;
+
         }
         else if (data == META_TYPE_U16) {
             uint16_t value = 0;
@@ -387,6 +397,8 @@ public:
                 mDecoder->decode(DataType::Fixed16, value);
             }
             decodedBlock = value;
+        std::cout << "CHECK primitive: " << value << std::endl;
+
         }
         else if (data == META_TYPE_U32) {
             uint32_t value = 0;
@@ -394,7 +406,11 @@ public:
                 mDecoder->decode(DataType::Fixed32, value);
             }
             decodedBlock = value;
+        std::cout << "CHECK primitive: " << value << std::endl;
+
         }
+
+        // std::cout << "CHECK primitive: " << value << std::endl;
         return decodedBlock;
     }
 
